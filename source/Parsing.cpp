@@ -4,6 +4,7 @@
 
 void Parser::receive_line(std::string str){
     line = str;
+    
 }
 
 bool Parser::isConvertibleToInt(std::string str){
@@ -22,6 +23,7 @@ bool Parser::isConvertibleToInt(std::string str){
 void Parser::to_raw_line(){
     tk_raw_line.tokens(line, " \t", true);   // Tokenize Line with " \t", 
     tk_raw_line.seek(0);
+    
     // This tokenize the tokens but it's still needed to remove some undesired tokens
 
     // With the method above there will be empty tokens "()", sometimes a token with spaces " " at the start like this for example: "(  123)" 
@@ -154,6 +156,7 @@ void Parser::to_final(){
     for (int i = 0; i < tk_single_char.size();i++){
         
         token = tk_single_char.get_token();
+
         
         if(token == "("){
             tk_final.set_tokens(token);
@@ -263,8 +266,8 @@ void Parser::to_final(){
                 // Its important for this to be checked first.
                 else if (i != 0 && (token_aux[zero] != '0' && token_aux[zero] != '1' && token_aux[zero] != '2' && token_aux[zero] != '3' && token_aux[zero] != '4' && token_aux[zero] != '5' && token_aux[zero] != '6' && token_aux[zero] != '7' && token_aux[zero] != '8' && token_aux[zero] != '9')){
                     tk_final.set_tokens(token);
-                    std::cout << token_aux;
-                   
+                    // std::cout << token_aux;
+                
                     prev_is_operator = true;    // For next token indicate that previous token is operator
                     prev_is_number = false;
                     prev_is_closing = false;
@@ -327,6 +330,7 @@ void Parser::to_final(){
             prev_is_closing = false;
             prev_is_operator = false;
         }
+        
         tk_single_char.next();
     }
 
@@ -345,7 +349,7 @@ void Parser::to_final(){
     bool is_expected_operator{false};           // (2)
     bool can_be_expected_end_parent{false};     // (3)
     bool invalid{false};
-
+    ErrorType error;
     std::string aux_token;
     int v_aux_token;
 
@@ -356,15 +360,21 @@ void Parser::to_final(){
         if (i == 0){
             if (token == "("){
                 parent_counter++;
+                // missing number after parenthesis if line == 0
+
                 can_be_expected_end_parent = true;
                 is_expected_number_or_op_parent = true;
                 is_expected_operator = false;
+
             } else if (isConvertibleToInt(token) == true){
+
                 is_expected_operator = true;
                 is_expected_number_or_op_parent = false;
+
             } else {
                 //error
-                std::cout << "not number or ( at first token";
+                
+                error = ErrorType::First_Term_Missing;
                 invalid = true;
                 break;
             }
@@ -379,9 +389,12 @@ void Parser::to_final(){
                     is_expected_number_or_op_parent = true;
                     is_expected_operator = false;
                 } else if (token == ")"){
+                    
                     if (can_be_expected_end_parent == true){
+                        
                         parent_counter--;
                         if (parent_counter == 0){
+                            std::cout << "hi" << std::endl;
                             can_be_expected_end_parent = false;
                         }
                     } else if (can_be_expected_end_parent == true) {
@@ -414,7 +427,16 @@ void Parser::to_final(){
                     is_expected_operator = true;
                 } else {
                     invalid = true;
-                    std::cout << "expected number after token" << i << "!";;
+                    if (token == ")"){
+                        std::cout << "hi there byai" << std::endl;
+                        parent_counter = 0;
+                        error = ErrorType::Missing_Number_After_Parenthesis;
+                    }
+                    else {
+                    std::cout << "hi there boi" << std::endl;
+                    error = ErrorType::Missing_Number;
+                    }
+                    //std::cout << "expected number after token" << i << "!";;
                     break;
                 }
             }
@@ -450,7 +472,7 @@ void Parser::to_final(){
                     } 
                     
                     else if (token == "+" || token == "-" || token == "/" || token == "*" || token == "%" || token == "^"){
-                        std::cout << "extra " << token << " at the end" << std::endl;
+                        error = ErrorType::Missing_Number;
                     } 
 
                     else if (isConvertibleToInt(token) == true){
@@ -487,43 +509,25 @@ void Parser::to_final(){
                 if (token == ")"){
                     if (parent_counter == 1){
                         // Its valid
+                        std::cout << "hiya" << std::endl;
+                        parent_counter--;
                     } else if (parent_counter > 1){
-                        std::cout << "its missing closing parentesis" << std::endl;
+                        std::cout << "hi" << std::endl;
+                        error = ErrorType::Missing_Close_Parent;
                     } else {
                         //There is no other case for this
+                        std::cout << "hy" << std::endl;
                     }
                 } 
                 // If token it's not an end parenthesis, its an error
                 else {
                     invalid = true;
-                    std::cout << "I'm expected a missing closed parenthesis!" << std::endl;
+                    
+                    error = ErrorType::Missing_Close_Parent;
                     break;
                 }
                 
             }
-            
-            
-
-            // Check if it's still expected one last end parentesis
-            else if (can_be_expected_end_parent == true){
-                if (token == ")" && parent_counter == 1){
-                    //its valid
-                } 
-                // Else if token == ")" but parent counter > 1
-                else if (token == ")" && parent_counter > 1){
-                    // Error
-                    invalid = true;
-                    std::cout << "it's missing the end parenthesis!";
-                    break;
-                }
-                // Or token != ")";
-                else if (token != ")"){
-                    // error
-                    invalid = true;
-                    std::cout << "it's missing an end parenthesis!";
-                    break;
-                }
-            } 
 
             else {
                 // erro
@@ -534,11 +538,101 @@ void Parser::to_final(){
         }
         tk_final.next();
     }
+
+    std::cout << "The line: " << line << std::endl;
+
+    if (parent_counter > 0){
+        invalid = true;
+        std::cout << parent_counter << std::endl;
+        std::cout << "there are parenthesis" << std::endl;
+        error = ErrorType::Missing_Close_Parent;
+    }
    
     if (!invalid){
         std::cout << "valid" << std::endl;
     } else {
-        std::cout << "invalid" << std::endl;
+        switch (error)
+        {
+        case (ErrorType::First_Term_Missing):
+            std::cout << "Missing <term> at column (" << first_term_missing() << ")!" << std::endl;
+            break;
+        
+        case (ErrorType::Missing_Number):
+            std::cout << "Missing <term> at column (" << find_operator_without_number() << ")!" << std::endl;
+            break;
+
+        case (ErrorType::Missing_Close_Parent):
+            std::cout << "Missing closing \")\" at column (" << line.size() + 1 << ") !" << std::endl;
+            break;
+
+        case (ErrorType::Missing_Number_After_Parenthesis):
+            std::cout << "Missing <term> at column (" << find_first_parenthesis_without_number() << ")!" << std::endl;
+            break;
+        }
+        
     }
 }
 
+int Parser::find_first_parenthesis_without_number(){
+    std::cout << "eae" << std::endl;
+    for (int i = 0; i < line.size(); i++){
+        if (line[i] == '('){
+            while (true){
+                
+                // COntinuar daqui
+
+            }
+        }
+    }
+    return 0;
+}
+
+int Parser::find_operator_without_number(){
+    
+    for (int i = 0; i < line.size(); i++){
+        
+        // Find the first operand without number
+        if (line[i] == '+' || line [i] == '-' || line [i] == '*' || line [i] == '%' || line [i] == '/' || line [i] == '^'){
+            
+            // If its the final position
+            if (i == (line.size() - 1)){
+                return i + 2;
+            }
+            i++;
+            while(true){
+                if(line[i] != ' '){
+                    if (line[i] == '0' || line [i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9' || line [i] == '-'){
+                        if (line[i] == '-'){
+                            i++;
+                            if (line[i] == '0' || line[i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9'){
+
+                            } else {
+                                return i;
+                            }
+                        }
+                        i++;
+                        break;
+                    } else {
+                        return i + 1;
+                    }
+                    
+                }
+                i++;
+            }
+        }
+    }
+    return 0;
+}
+
+int Parser::first_term_missing(){
+    for (int i = 0; i < line.size(); i++){
+        
+        // Find the first elements that isnt a int number or "("
+        if (line[i] == '0' || line [i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9' || line[i] == '(' || line[i] == ' '){
+
+        } else {
+            return i + 1;
+        }
+    }
+    return 0;
+}

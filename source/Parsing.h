@@ -25,7 +25,16 @@ public:
     void receive_line(std::string str);
 
     bool isConvertibleToInt(std::string str);
+    int find_operator_without_number();
+    int first_term_missing();
+    int find_first_parenthesis_without_number();
+};
 
+enum class ErrorType {
+    First_Term_Missing = 0,
+    Missing_Number,
+    Missing_Number_After_Parenthesis,
+    Missing_Close_Parent
 };
 
 #endif 
