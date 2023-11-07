@@ -359,7 +359,13 @@ void Parser::to_final(){
         // For the first position is always expected "(" or a number, else is invalid
         if (i == 0){
             if (token == "("){
+                if (line.size() == 1){
+                    invalid = true;
+                    error = ErrorType::Missing_Number;
+                    break;
+                }
                 parent_counter++;
+                
                 // missing number after parenthesis if line == 0
 
                 can_be_expected_end_parent = true;
@@ -507,7 +513,17 @@ void Parser::to_final(){
             // Also, it must be the last end parenthesis, if it's still expecting one after the last one, then it's an error 
             else if (can_be_expected_end_parent == true){
                 if (token == ")"){
-                    if (parent_counter == 1){
+                    tk_final.prev();
+                    aux_token = tk_final.get_token();
+                    tk_final.next();
+                    if (aux_token == "("){
+                        parent_counter = 0;
+                        invalid = true;
+                        error = ErrorType::Missing_Number_After_Parenthesis;
+                        break;
+                    }
+
+                    else if (parent_counter == 1){
                         // Its valid
                         std::cout << "hiya" << std::endl;
                         parent_counter--;
@@ -522,7 +538,6 @@ void Parser::to_final(){
                 // If token it's not an end parenthesis, its an error
                 else {
                     invalid = true;
-                    
                     error = ErrorType::Missing_Close_Parent;
                     break;
                 }
@@ -542,6 +557,8 @@ void Parser::to_final(){
     std::cout << "The line: " << line << std::endl;
 
     if (parent_counter > 0){
+        // if last term ends with + or - ...
+        // else this
         invalid = true;
         std::cout << parent_counter << std::endl;
         std::cout << "there are parenthesis" << std::endl;
@@ -578,7 +595,22 @@ int Parser::find_first_parenthesis_without_number(){
     for (int i = 0; i < line.size(); i++){
         if (line[i] == '('){
             while (true){
-                
+                i++;
+                if (line[i] == ' ' || line[i] == '('){
+
+                }
+
+                else if (line[i] == '0' || line[i] == '1' || line[i] == '2' || line[i] == '3' || line[i] == '4' || line[i] == '5' || line[i] == '6' || line[i] == '7' || line[i] == '8' || line[i] == '9'){
+                    break;
+                } else if (line[i] == '-'){
+                    i++;
+                    if (line[i] == '0' || line[i] == '1' || line[i] == '2' || line[i] == '3' || line[i] == '4' || line[i] == '5' || line[i] == '6' || line[i] == '7' || line[i] == '8' || line[i] == '9'){
+                        break;
+                    }
+
+                } else {
+                    return i + 1;
+                }
                 // COntinuar daqui
 
             }
@@ -592,7 +624,7 @@ int Parser::find_operator_without_number(){
     for (int i = 0; i < line.size(); i++){
         
         // Find the first operand without number
-        if (line[i] == '+' || line [i] == '-' || line [i] == '*' || line [i] == '%' || line [i] == '/' || line [i] == '^'){
+        if (line[i] == '+' || line [i] == '-' || line [i] == '*' || line [i] == '%' || line [i] == '/' || line [i] == '^' || line[i] == '('){
             
             // If its the final position
             if (i == (line.size() - 1)){
