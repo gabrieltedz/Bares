@@ -28,13 +28,19 @@ public:
     int find_operator_without_number();
     int first_term_missing();
     int find_first_parenthesis_without_number();
+    int find_missing_operator_after_number();
+    int find_missing_operator_after_end_parenthesis();
+    int find_mistake_end_or_opening_parenthesis();
 };
 
 enum class ErrorType {
     First_Term_Missing = 0,
     Missing_Number,
     Missing_Number_After_Parenthesis,
-    Missing_Close_Parent
+    Missing_Close_Parent,
+    Missing_Operand,
+    Missing_Operand_After_End_Parenthesis,
+    Mistake_Parenthesis
 };
 
 #endif 
