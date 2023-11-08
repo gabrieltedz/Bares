@@ -765,3 +765,20 @@ int Parser::find_mistake_end_or_opening_parenthesis(){
     }
     return 0;
 }
+
+std::string Parser::get_expression_codified(){
+    tk_final.seek(0);
+    std::string expression_infixed_codified = "";
+    std::string token;
+    for(int i = 0; i < tk_final.size_vector(); i++){
+        token = tk_final.get_token();
+        if(isConvertibleToInt(token)){
+            expression_infixed_codified += '@';
+            expression_infixed_codified += token;
+        } else {
+            expression_infixed_codified +=token;
+        }
+        tk_final.next();
+    }
+    return expression_infixed_codified;
+}

@@ -31,6 +31,7 @@ public:
     int find_missing_operator_after_number();
     int find_missing_operator_after_end_parenthesis();
     int find_mistake_end_or_opening_parenthesis();
+    std::string get_expression_codified();
 };
 
 enum class ErrorType {
