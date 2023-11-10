@@ -7,16 +7,28 @@ using namespace std;
 
 int main() {
 
-    Parser parser;
-    std::string expression_infixed;
+    Parser parser; // Declaration of parser object from Parser class
+    std::string expression_infixed; // Infixed expression
     std::string line; // Line that will be read
+
+    // Keep reading lines until there are none left
     while(std::getline(std::cin, line)){
+
+        // Clear the parser
         parser.clear();
+
+        //receive line
         parser.receive_line(line);
+
+        // Do the conversion to the tokens
         parser.to_raw_line();
         parser.to_no_spaces();
         parser.to_single_char();
+        // This is the most important one
         parser.to_final();
+
+        // After previous conversions, if invalid = true it outputs it's respective error message
+        // Else if invalid = false, that means the expression is (supposed) to be valid and is sent to the infix to posfix program
 
         if (parser.invalid == false){
             expression_infixed = parser.get_expression_codified();

@@ -8,7 +8,7 @@
 
 
 /*!
- * Responsible for transformation of expression im posfixed.
+ * @brief Responsible for transformation of expression im posfixed.
 */
 class Pos_fixed{
 private:

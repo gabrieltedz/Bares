@@ -5,6 +5,9 @@
 #include <iostream>
 #include "tokenizer.h"
 
+/**
+ * @brief Parsing and tokenizing class
+*/
 class Parser {
 private:
     // Tokenizers, also used as "buffers" for the tokens they carry
@@ -14,28 +17,81 @@ private:
     std::string line; // Line read
 
 public:
+    /**
+     * @brief bool value to indicate if the the expression is invalid for some reason
+     * if so, it doesnt go further and sends the error message!
+    */
     bool invalid{false};
+
+    /**
+     * @brief Constructor
+    */
     Parser() = default;
+
+    /**
+     * @brief Deconstructor
+    */
     ~Parser() = default;
 
-    void to_raw_line(); // Transform line into raw tokens
-    void to_no_spaces();    // Take out undesired spaces
-    void to_single_char();  // Reduce to 1 charachter tokens and numbers
+    /**
+     * @brief Transform line into raw tokens
+    */
+    void to_raw_line(); 
+
+    /**
+     * @brief Take out undesired spaces
+    */
+    void to_no_spaces();  
+
+    /**
+     * @brief reduce to 1 character tokens and numbers
+    */
+    void to_single_char();  
+
+    /**
+     * @brief Reconstruct the line with integer values and discard tokens with letters
+    */
     void to_final();        // Reconstruct the line with integer values and discard tokens with letters
 
+    /**
+     * @brief Receive original line
+     * @param str original string line expression
+    */
     void receive_line(std::string str);
 
+    /**
+     * @brief checks if the string is convertible to string
+    */
     bool isConvertibleToInt(std::string str);
+
+//============================================================
+
+    // Auxiliary function to encounter errors
+    /**
+     * 
+    */
     int find_operator_without_number();
     int first_term_missing();
     int find_first_parenthesis_without_number();
     int find_missing_operator_after_number();
     int find_missing_operator_after_end_parenthesis();
     int find_mistake_end_or_opening_parenthesis();
+//============================================================
+    
+    /**
+     * @brief Return the valid infixed expression codified with '@' to indicate int values after it
+    */
     std::string get_expression_codified();
+
+    /**
+     * @brief Resets the class
+    */
     void clear();
 };
 
+/**
+ * @brief Class of error types
+*/
 enum class ErrorType {
     First_Term_Missing = 0,
     Missing_Number,

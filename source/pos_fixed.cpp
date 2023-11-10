@@ -56,7 +56,6 @@ void Pos_fixed::pos(std::string& exp){
                 m_ope.push(m_exp[i]);
 
             } 
-            // Se for um parêntese fechado, move os números e operadores para a string resultante
             // If it's an closing parenthesis, move the numbers and operators to the result string
             else if(m_exp[i] == ')'){
                 m_ope.push(m_exp[i]);
