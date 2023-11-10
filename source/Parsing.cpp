@@ -144,7 +144,7 @@ void Parser::to_single_char(){
 void Parser::to_final(){
     // Now we fix the negative integer values and also filter letters
     tk_single_char.seek(0);
-
+    invalid = false;
     std::string token;
     // Auxiliar bool types
     bool prev_is_number{false}; // Prev token is a number
@@ -340,18 +340,18 @@ void Parser::to_final(){
     }
 
     tk_single_char.seek(0);
-    for (int i = 0; i < tk_single_char.size(); i++){
+    /*for (int i = 0; i < tk_single_char.size(); i++){
         std::cout << tk_single_char.get_token() << " ";
         tk_single_char.next();
-    }
+    }*/
 
-    std::cout << std::endl << "Tokens finais: " << std::endl;
+    //std::cout << std::endl << "Tokens finais: " << std::endl;
 
-    for (int i = 0; i < tk_final.size(); i++){
+    /*for (int i = 0; i < tk_final.size(); i++){
         token = tk_final.get_token();
         std::cout << token << " ";
         tk_final.next();
-    }
+    }*/
     tk_final.seek(0);
     std::cout << std::endl;
 
@@ -359,7 +359,7 @@ void Parser::to_final(){
     bool is_expected_number_or_op_parent{true}; // (1)
     bool is_expected_operator{false};           // (2)
     bool can_be_expected_end_parent{false};     // (3)
-    bool invalid{false};
+
     ErrorType error;
     std::string aux_token;
     int v_aux_token;
@@ -412,12 +412,12 @@ void Parser::to_final(){
                         
                         parent_counter--;
                         if (parent_counter == 0){
-                            std::cout << "hiena" << std::endl;
+                            
                             can_be_expected_end_parent = false;
                         }
                     } else if (can_be_expected_end_parent == false) {
                         //error
-                        std::cout << "this is an invalid end parenthesis" << "!";
+                        //std::cout << "this is an invalid end parenthesis" << "!";
                         invalid = true;
                         break;
                     } else {
@@ -426,7 +426,7 @@ void Parser::to_final(){
                     
                 } else {
                     //error
-                    std::cout <<"expected operator after token" << i << "! mané" << std::endl;
+                    //std::cout <<"expected operator after token" << i << "!" << std::endl;
                     tk_final.prev();
                     aux_token = tk_final.get_token();
                     tk_final.next();
@@ -454,12 +454,12 @@ void Parser::to_final(){
                 } else {
                     invalid = true;
                     if (token == ")"){
-                        std::cout << "hi there byai" << std::endl;
+                        
                         parent_counter = 0;
                         error = ErrorType::Missing_Number;
                     }
                     else {
-                    std::cout << "hi there boi" << std::endl;
+                    
                     error = ErrorType::Missing_Number;
                     }
                     //std::cout << "expected number after token" << i << "!";;
@@ -481,13 +481,13 @@ void Parser::to_final(){
                     // Its valid
                     } else if (token == "+" || token == "-" || token == "%" || token == "/" || token == "*" || token == "^"){
                         invalid = true;
-                        std::cout << "expected number but it was operator " << token << "!";;
+                        //std::cout << "expected number but it was operator " << token << "!";;
                         error = ErrorType::Missing_Number;
                         break;
                     } else if (token == "(" || token == ")"){
                         invalid = true;
                         error = ErrorType::Missing_Number;
-                        std::cout << "expected number but it was " << token << "!";;
+                        //std::cout << "expected number but it was " << token << "!";;
                         break;
                     }
                 } 
@@ -496,7 +496,7 @@ void Parser::to_final(){
                     // Error
                     invalid = true;
                     if (token == "(" || token == ")"){
-                        std::cout << "Unpaired " << token << " at the end" << std::endl;
+                        //std::cout << "Unpaired " << token << " at the end" << std::endl;
                         error = ErrorType::Mistake_Parenthesis;
                         
                     } 
@@ -506,14 +506,14 @@ void Parser::to_final(){
                     } 
 
                     else if (isConvertibleToInt(token) == true){
-                        std::cout << "missing operator before last number!" << std::endl;
+                        //std::cout << "missing operator before last number!" << std::endl;
                         error = ErrorType::Missing_Operand;
                         invalid = true;
                         break;
                     }
                     else {
                         // extra symbol after valid expression....
-                        std::cout << "testing" << std::endl;
+                        //std::cout << "testing" << std::endl;
                     }
                     
                     break;
@@ -539,14 +539,14 @@ void Parser::to_final(){
 
                     else if (parent_counter == 1){
                         // Its valid
-                        std::cout << "hiya" << std::endl;
+                        
                         parent_counter--;
                     } else if (parent_counter > 1){
-                        std::cout << "hi" << std::endl;
+                        
                         error = ErrorType::Missing_Close_Parent;
                     } else {
                         //There is no other case for this
-                        std::cout << "hy" << std::endl;
+                        
                     }
                 } 
                 // If token it's not an end parenthesis, its an error
@@ -561,7 +561,7 @@ void Parser::to_final(){
             else {
                 // erro
                 invalid = true;
-                std::cout << "what case was this";
+                
                 break;
             }
         }
@@ -588,7 +588,7 @@ void Parser::to_final(){
                 missing_term = true;
                 invalid = true;
                 error = ErrorType::First_Term_Missing;
-                std::cout << "ei" << std::endl;
+                
                 break;
             }
             
@@ -602,7 +602,7 @@ void Parser::to_final(){
 
     
 
-    std::cout << "The line: " << line << std::endl;
+    
     
 
     if (parent_counter > 0){
@@ -610,22 +610,20 @@ void Parser::to_final(){
         // else this
         invalid = true;
         std::cout << parent_counter << std::endl;
-        std::cout << "there are parenthesis" << std::endl;
+        
         error = ErrorType::Missing_Close_Parent;
     }
    
     if (!invalid){
-        std::cout << "valid" << std::endl;
+        //std::cout << "valid" << std::endl;
     } else {
         switch (error)
         {
         case (ErrorType::First_Term_Missing):
-        std::cout << "aqui";
             std::cout << "Missing <term> at column (" << first_term_missing() << ")!" << std::endl;
             break;
         
         case (ErrorType::Missing_Number):
-        std::cout << "aqui";
             std::cout << "Missing <term> at column (" << find_operator_without_number() << ")!" << std::endl;
             break;
 
@@ -638,15 +636,15 @@ void Parser::to_final(){
             break;
         
         case (ErrorType::Missing_Operand):
-            std::cout << "(1)Extra symbol after valid expression found at column (" << find_missing_operator_after_number() << ")!" << std::endl;
+            std::cout << "Extra symbol after valid expression found at column (" << find_missing_operator_after_number() << ")!" << std::endl;
             break;
 
         case (ErrorType::Missing_Operand_After_End_Parenthesis):
-            std::cout << "(2)Extra symbol after valid expression found at column (" << find_missing_operator_after_end_parenthesis() << ")!" << std::endl;
+            std::cout << "Extra symbol after valid expression found at column (" << find_missing_operator_after_end_parenthesis() << ")!" << std::endl;
             break;
         
         case (ErrorType::Mistake_Parenthesis):
-            std::cout << "(3)Extrasymbol after valid expression found at column (" << find_mistake_end_or_opening_parenthesis() << ")!" << std::endl;
+            std::cout << "Extrasymbol after valid expression found at column (" << find_mistake_end_or_opening_parenthesis() << ")!" << std::endl;
         }
 
         
@@ -736,7 +734,7 @@ int Parser::first_term_missing(){
 }
 
 int Parser::find_missing_operator_after_number(){
-    std::cout << "coé" << std::endl;
+    
     for (int i = 0; i < line.size(); i++){
         
         if (line[i] == '0' || line [i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9'){
@@ -760,7 +758,7 @@ int Parser::find_missing_operator_after_number(){
 
 // Depois de ')' sempre deve ser um operando
 int Parser::find_missing_operator_after_end_parenthesis(){
-    std::cout << "passou" << std::endl;
+    
     for(int i = 0; i < line.size(); i++){
         if (line[i] == ')'){
             i++;
@@ -776,7 +774,7 @@ int Parser::find_missing_operator_after_end_parenthesis(){
 }
 
 int Parser::find_mistake_end_or_opening_parenthesis(){
-    std::cout << "passou aqui ó" << std::endl;
+    
     for(int i = 0; i < line.size(); i++){
         if(line[i] == '(' || line[i] == ')'){
             return i+1;
@@ -800,4 +798,13 @@ std::string Parser::get_expression_codified(){
         tk_final.next();
     }
     return expression_infixed_codified;
+}
+
+void Parser::clear(){
+    tk_raw_line.reset();
+    tk_no_spaces.reset();
+    tk_single_char.reset();
+    tk_final.reset();
+    temp.reset();
+    line.clear();
 }

@@ -14,6 +14,7 @@ private:
     std::string line; // Line read
 
 public:
+    bool invalid{false};
     Parser() = default;
     ~Parser() = default;
 
@@ -32,6 +33,7 @@ public:
     int find_missing_operator_after_end_parenthesis();
     int find_mistake_end_or_opening_parenthesis();
     std::string get_expression_codified();
+    void clear();
 };
 
 enum class ErrorType {

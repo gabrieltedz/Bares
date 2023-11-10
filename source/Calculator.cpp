@@ -62,7 +62,7 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 + op2);
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         } else if (expression[i] == '-'){
             op2 = m_stack.top();
@@ -71,7 +71,7 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 - op2);
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         } else if (expression[i] == '*'){
             op2 = m_stack.top();
@@ -84,7 +84,7 @@ int Calculator::calculate(){
             }
 
             result = (op1 * op2);
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         } else if (expression[i] == '^'){
             op2 = m_stack.top();
@@ -100,9 +100,8 @@ int Calculator::calculate(){
             if (value){
                 //if value out of range...
             }
-
             result = value;
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         } else if (expression[i] == '/'){
             op2 = m_stack.top();
@@ -116,7 +115,7 @@ int Calculator::calculate(){
             }
 
             result = (op1 / op2);
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         } else if (expression[i] == '%'){
             op2 = m_stack.top();
@@ -125,7 +124,7 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 % op2);
-            std::cout << result << std::endl;
+            
             m_stack.push(result);
         }
         std::string check_result = std::to_string(result);
@@ -139,6 +138,17 @@ int Calculator::calculate(){
         //use find para achar o termo fora
     }
     result = m_stack.top();
-    std::cout << "Here is the result of the expression: " << result << std::endl;
+    //std::cout << "Here is the result of the expression: " << result << std::endl;
     return result;
+}
+
+void Calculator::clear(){
+    expression.clear();
+    original_line.clear();
+    op1 = {0};
+    op2 = {0};
+    result = {0};
+    while (!m_stack.empty()) {
+        m_stack.pop();
+    }
 }

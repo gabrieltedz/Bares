@@ -173,7 +173,7 @@ void Pos_fixed::pos(std::string& exp){
         
     }
                
-    std::cout << "teste " << result <<  "\n";
+    //std::cout << "teste " << result <<  "\n";
 }
 
 bool Pos_fixed::is_number(char digit){
@@ -195,4 +195,15 @@ bool Pos_fixed::isConvertibleToInt(std::string str){
 
 std::string Pos_fixed::return_result(){
     return result;
+}
+
+void Pos_fixed::clear(){
+    m_exp.clear();
+    result.clear();
+    while(!m_ope.empty()){
+        m_ope.pop();
+    }
+    while(!m_number.empty()){
+        m_number.pop();
+    }
 }

@@ -8,28 +8,51 @@ using namespace std;
 int main() {
 
     Parser parser;
-
+    std::string expression_infixed;
     std::string line; // Line that will be read
-    std::getline(std::cin, line);    // Reading line
+    while(std::getline(std::cin, line)){
+        parser.clear();
+        parser.receive_line(line);
+        parser.to_raw_line();
+        parser.to_no_spaces();
+        parser.to_single_char();
+        parser.to_final();
 
-    std::cout << line << std::endl;
-    
+        if (parser.invalid == false){
+            expression_infixed = parser.get_expression_codified();
+            Pos_fixed m_pos_fix{expression_infixed};
+            m_pos_fix.pos(expression_infixed);
+
+            Calculator calc;
+            calc.receive_expression(m_pos_fix.return_result() , line);
+            int result = calc.calculate();
+            std::cout << result << std::endl;
+
+
+            calc.clear();
+            m_pos_fix.clear();
+        } else {
+
+        }
+        
+    }
+
+    /*parser.clear();
+
     parser.receive_line(line);
-    parser.to_raw_line();
-    parser.to_no_spaces();
-    parser.to_single_char();
-    parser.to_final();
+        parser.to_raw_line();
+        parser.to_no_spaces();
+        parser.to_single_char();
+        parser.to_final();
 
     std::string expression_infixed = parser.get_expression_codified();
+            Pos_fixed m_pos_fix{expression_infixed};
+            m_pos_fix.pos(expression_infixed);
 
-    std:: cout << "aqui está a expressão: " << expression_infixed << std::endl;
-
-    Pos_fixed m_pos_fix{expression_infixed};
-    m_pos_fix.pos(expression_infixed);
-
-    Calculator calc;
-    calc.receive_expression(m_pos_fix.return_result() , line);
-    int result = calc.calculate();
+            Calculator calc;
+            calc.receive_expression(m_pos_fix.return_result() , line);
+            int result = calc.calculate();
+            std::cout << result << std::endl;*/
     
     return 0;
 }
