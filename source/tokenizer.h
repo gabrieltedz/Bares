@@ -102,51 +102,5 @@ public:
     void reset();
 };
 
-/*
-int main() {
-  {
-    std::string line{ "12 , 4; 5,  100,  3" };
-
-    std::cout << ">> Original string: " << std::quoted(line) << "\n\n";
-
-    Tokenizer tk(line);
-
-    std::vector<std::string> lista = tk.get_tokens_list();
-
-
-
-    std::cout << ">> Forward traversing:\n";
-    while (not tk.end()) {
-      if (tk.get_token()) {
-        std::cout << std::quoted(*tk.get_token()) << " "; // tk.get_token().value()
-        tk.next();
-      }
-    }
-    std::cout << "\n>> Reverse traversing:\n";
-    tk.seek(tk.size() - 1);
-      if (tk.get_token()) {
-        std::cout << "-- Current token is " << std::quoted(*tk.get_token()) << '\n';
-        tk.prev();
-      }
-    
-  }
-
-  {
-    std::string line{ "  São Paulo  , João  Pessoa,   Recife, Boa  Vista   , Natal 3  " };
-    std::cout << "\n\n>> Original string: " << std::quoted(line) << "\n\n";
-
-    Tokenizer tk( line, "", false );
-    std::cout << ">> Forward traversing:\n";
-    while (not tk.end()) {
-      if (tk.get_token()) {
-        std::cout << "-- Current token is " << std::quoted(*tk.get_token()) << '\n';
-        tk.next();
-      }
-    }
-  }
-
-  return 0;
-}
-*/
 
 #endif //_TOKENIZER_H_

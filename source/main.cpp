@@ -37,22 +37,7 @@ int main() {
         
     }
 
-    /*parser.clear();
 
-    parser.receive_line(line);
-        parser.to_raw_line();
-        parser.to_no_spaces();
-        parser.to_single_char();
-        parser.to_final();
-
-    std::string expression_infixed = parser.get_expression_codified();
-            Pos_fixed m_pos_fix{expression_infixed};
-            m_pos_fix.pos(expression_infixed);
-
-            Calculator calc;
-            calc.receive_expression(m_pos_fix.return_result() , line);
-            int result = calc.calculate();
-            std::cout << result << std::endl;*/
     
     return 0;
 }

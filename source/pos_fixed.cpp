@@ -5,48 +5,59 @@
 #include <string>
 #include "pos_fixed.h"
 
-
+/**
+ * @brief Converts the infixed expression to posfixed
+ * @param exp infixed expression to be converted to pos
+*/
 void Pos_fixed::pos(std::string& exp){
-    // Itera através da expressão infix
+    // Iterate through the infixed expression
     for(size_t i{0}; i < m_exp.length(); i++){
-        // Se o caractere atual for um número, adiciona à pilha de números
-        // '@ é usado para representar que há um número inteiro imediatamente após
+        // If current characht is a number, add it to the stack of numbers
+        // '@' is utilized here to indicate a int number immediately after
+
         if(m_exp[i] == '@'){
+            // We send the '@' because we will also use it to indicate a integer number in the Calculator class
             m_number.push('@');
             std::string aux;
             i++;
-            // Coloque em aux o char imediatamente após '@'
-            // Nesse caso pode ser um menos ou um número positive incluindo o zero
+
+            // Put in aux the char immediately after '@'
+            // It can be either '-' or a positive number including zero
             aux = m_exp[i];
             m_number.push(m_exp[i]);
-            // Avance mais um caracter
+
+
+            // Advance another charachter 
             i++;
+
+            // Stop if find a char that is not a number
             while(true){
-                // Se o caracter for número, adicione-o a aux
+                // If the char is a number, add it to aux
                 if (is_number(m_exp[i])){
                     aux += m_exp[i];
                     m_number.push(m_exp[i]);
                 } 
-                // Se não, pare o loop e retroceda 1 char (o loop do for irá acrescentar no final)
+                // Else, stop the loop and retreat 1 char 
+                // this is because the for loop will start in the right position in the next iteration
                 else {
                     i--;
                     break;
                 }
+
+                // If the while loop wasnt broken, advance another char in the line
                 i++;
             }
-            //std::cout << aux << std::endl;
-            //int m_num = stoi(aux);
-            //m_number.push(m_num);
             aux.clear();
         }
         else{
-            // Manipula operadores e parênteses
+            // Manipulating operators and parenthesis
             if(m_exp[i] == '('){
-            // Se for um parêntese aberto, adiciona à pilha de operadores
+            // If its an open parenthesis, add it to the stack of operators
                 m_ope.push(m_exp[i]);
 
             } 
             // Se for um parêntese fechado, move os números e operadores para a string resultante
+            // If it's an closing parenthesis, move the numbers and operators to the result string
             else if(m_exp[i] == ')'){
                 m_ope.push(m_exp[i]);
                 while(!m_number.empty()){
@@ -58,11 +69,13 @@ void Pos_fixed::pos(std::string& exp){
                 }
             
             }
-            // A crescenta na pilha
+            
+            //Add it to the stack
             else if(m_exp[i] == '^'){
                 m_ope.push(m_exp[i]); 
             }
-            // Adiciona na pilha caso não tiver operadores com grau maior ou igual de preferência, se não, concatena na string.
+
+            // Add to the stack if there arent any operators with higher or equal preference, else, concatenates in the string
             else if(m_exp[i] == '*'){
                 if(m_ope.empty() or m_ope.top() == '+' or m_ope.top() == '-' or m_ope.top() == '('){
                     m_ope.push(m_exp[i]);
@@ -80,7 +93,7 @@ void Pos_fixed::pos(std::string& exp){
                 }
 
             }
-            // Adiciona na pilha caso não tiver operadores com grau maior ou igual de preferência, se não, concatena na string.
+            // Add to the stack if there arent any operators with higher or equal preference, else, concatenates in the string
             else if(m_exp[i] == '/') {
                 if(m_ope.empty() or m_ope.top() == '+' or m_ope.top() == '-' or m_ope.top() == '('){
                     m_ope.push(m_exp[i]);
@@ -98,7 +111,7 @@ void Pos_fixed::pos(std::string& exp){
                 }
 
             }
-            // Adiciona na pilha caso não tiver operadores com grau maior ou igual de preferência, se não, concatena na string.
+            // Add to the stack if there arent any operators with higher or equal preference, else, concatenates in the string
             else if (m_exp[i] == '%'){
                 if(m_ope.empty() or m_ope.top() == '+' or m_ope.top() == '-' or m_ope.top() == '('){
                     m_ope.push(m_exp[i]);
@@ -116,7 +129,7 @@ void Pos_fixed::pos(std::string& exp){
                 }
 
             }
-            // Adiciona na pilha se estiver estiver vazia, se não, concatena na string.
+            // Add to the stack if it is empty, else, concatenates into the string
             else if(m_exp[i] == '-'){
                 if(m_ope.empty() or m_ope.top() == '('){
                     m_ope.push(m_exp[i]);
@@ -133,7 +146,7 @@ void Pos_fixed::pos(std::string& exp){
                 }
 
             }
-             // Adiciona na pilha se estiver estiver vazia, se não, concatena na string.
+            // Add to the stack if it is empty, else, concatenates into the string
             else if(m_exp[i] == '+'){
                 if(m_ope.empty()or m_ope.top() == '('){
                     m_ope.push(m_exp[i]);
@@ -153,7 +166,8 @@ void Pos_fixed::pos(std::string& exp){
             }
         }
     }
-    // Limpa as pilhas e remove parênteses redundantes da string resultante
+
+    // Clears the stacks and removes redundant parenthesis in the resulting string
     while(!m_number.empty()){
         result += m_number.front();
         m_number.pop();
@@ -164,7 +178,7 @@ void Pos_fixed::pos(std::string& exp){
         m_ope.pop();
     } 
 
-    // Remove parênteses da string resultante
+    // Removes parenthesis from the resulting string
     for (size_t i = 0; i < result.length(); i++){
         if (result[i] == '(' || result[i] == ')'){
             result.erase(i, 1);
@@ -176,10 +190,18 @@ void Pos_fixed::pos(std::string& exp){
     //std::cout << "teste " << result <<  "\n";
 }
 
+/**
+ * @brief Checks if the char is a digit
+ * @param digit char variable to be checked if its a digit
+*/
 bool Pos_fixed::is_number(char digit){
     return std::isdigit(static_cast<unsigned char>(digit)) != 0;
 }
 
+/**
+ * @brief Checks if the string is convertible to int
+ * @param str string to be checked if can be converted to int
+*/
 bool Pos_fixed::isConvertibleToInt(std::string str){
     try {
             std::stoi(str);
@@ -193,10 +215,17 @@ bool Pos_fixed::isConvertibleToInt(std::string str){
         }
 }
 
+/**
+ * @brief Returns the result string variable
+ * @return result expression posfixed
+*/
 std::string Pos_fixed::return_result(){
     return result;
 }
 
+/**
+ * @brief Resets the class
+*/
 void Pos_fixed::clear(){
     m_exp.clear();
     result.clear();
