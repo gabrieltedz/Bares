@@ -30,6 +30,7 @@ public:
 
     bool is_oper();
 
+    std::string return_result();
 
 
 };

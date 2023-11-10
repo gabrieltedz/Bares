@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Parsing.h"
 #include "pos_fixed.h"
+#include "Calculator.h"
 #include <string>
 using namespace std;    
 
@@ -23,8 +24,12 @@ int main() {
 
     std:: cout << "aqui está a expressão: " << expression_infixed << std::endl;
 
-    Pos_fixed A{expression_infixed};
-    A.pos(expression_infixed);
+    Pos_fixed m_pos_fix{expression_infixed};
+    m_pos_fix.pos(expression_infixed);
+
+    Calculator calc;
+    calc.receive_expression(m_pos_fix.return_result() , line);
+    int result = calc.calculate();
     
     return 0;
 }

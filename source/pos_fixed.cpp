@@ -192,3 +192,7 @@ bool Pos_fixed::isConvertibleToInt(std::string str){
             return false;
         }
 }
+
+std::string Pos_fixed::return_result(){
+    return result;
+}

@@ -330,7 +330,18 @@ void Parser::to_final(){
             prev_is_closing = false;
             prev_is_operator = false;
         }
+
+        else {
+            tk_final.set_tokens(token);
+            break;
+        }
         
+        tk_single_char.next();
+    }
+
+    tk_single_char.seek(0);
+    for (int i = 0; i < tk_single_char.size(); i++){
+        std::cout << tk_single_char.get_token() << " ";
         tk_single_char.next();
     }
 
@@ -353,8 +364,13 @@ void Parser::to_final(){
     std::string aux_token;
     int v_aux_token;
 
+    
+    tk_final.seek(0);
+
     for (int i = 0; i < tk_final.size(); i++){
         token = tk_final.get_token();
+
+        
         
         // For the first position is always expected "(" or a number, else is invalid
         if (i == 0){
@@ -496,6 +512,7 @@ void Parser::to_final(){
                         break;
                     }
                     else {
+                        // extra symbol after valid expression....
                         std::cout << "testing" << std::endl;
                     }
                     
@@ -603,10 +620,12 @@ void Parser::to_final(){
         switch (error)
         {
         case (ErrorType::First_Term_Missing):
+        std::cout << "aqui";
             std::cout << "Missing <term> at column (" << first_term_missing() << ")!" << std::endl;
             break;
         
         case (ErrorType::Missing_Number):
+        std::cout << "aqui";
             std::cout << "Missing <term> at column (" << find_operator_without_number() << ")!" << std::endl;
             break;
 
@@ -658,7 +677,7 @@ int Parser::find_first_parenthesis_without_number(){
                 } else {
                     return i + 1;
                 }
-                // COntinuar daqui
+                
 
             }
         }
