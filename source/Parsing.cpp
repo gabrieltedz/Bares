@@ -87,7 +87,7 @@ void Parser::to_no_spaces(){
             temp.set_tokens(token);
         }
         tk_no_spaces.next();
-    } std::cout << std::endl;
+    } //std::cout << std::endl;
 
     // Repass the desired tokens in this step to tk_no_spaces
     tk_no_spaces.reset();
@@ -372,7 +372,7 @@ void Parser::to_final(){
         tk_final.next();
     }*/
     tk_final.seek(0);
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     int parent_counter{0};
     bool is_expected_number_or_op_parent{true}; // (1)
@@ -628,7 +628,7 @@ void Parser::to_final(){
         // if last term ends with + or - ...
         // else this
         invalid = true;
-        std::cout << parent_counter << std::endl;
+        //std::cout << parent_counter << std::endl;
         
         error = ErrorType::Missing_Close_Parent;
     }
@@ -665,11 +665,6 @@ void Parser::to_final(){
         case (ErrorType::Mistake_Parenthesis):
             std::cout << "Extra symbol after valid expression found at column (" << find_mistake_end_or_opening_parenthesis() << ")!" << std::endl;
         }
-
-        
-
-    
-        
     }
 }
 
