@@ -66,16 +66,15 @@ public:
 
 //============================================================
 
-    // Auxiliary function to encounter errors
-    /**
-     * 
-    */
+    // Auxiliary functions to encounter errors
+
     int find_operator_without_number();
     int first_term_missing();
     int find_first_parenthesis_without_number();
     int find_missing_operator_after_number();
     int find_missing_operator_after_end_parenthesis();
     int find_mistake_end_or_opening_parenthesis();
+    
 //============================================================
     
     /**

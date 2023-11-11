@@ -2,11 +2,18 @@
 #include <string>
 #include "Parsing.h"
 
+/**
+ * @brief Receive original line
+ * @param str original string line expression
+*/
 void Parser::receive_line(std::string str){
     line = str;
     
 }
 
+/**
+     * @brief checks if the string is convertible to string
+    */
 bool Parser::isConvertibleToInt(std::string str){
     try {
             std::stoi(str);
@@ -20,6 +27,9 @@ bool Parser::isConvertibleToInt(std::string str){
         }
 }
 
+/**
+ * @brief Transform line into raw tokens
+*/
 void Parser::to_raw_line(){
     tk_raw_line.tokens(line, " \t", true);   // Tokenize Line with " \t", 
     tk_raw_line.seek(0);
@@ -30,6 +40,9 @@ void Parser::to_raw_line(){
     // and sometimes tokens only with spaces. The latter are \t that will show up like this "(    )"
 }
 
+/**
+ * @brief Take out undesired spaces
+*/
 void Parser::to_no_spaces(){
     // Remove the "()" tokens and pass them to tk_no_spaces
     for (int i = 0; i < tk_raw_line.size(); i++){
@@ -85,6 +98,9 @@ void Parser::to_no_spaces(){
     tk_no_spaces.seek(0);
 }
 
+/**
+ * @brief reduce to 1 character tokens and numbers
+*/
 void Parser::to_single_char(){
 
     // So, after the previous loops it's still necessary to separate the tokens into single charachters and positive numbers, then after this next loop fix the negative integer values
@@ -141,6 +157,9 @@ void Parser::to_single_char(){
 
 }
 
+/**
+ * @brief Reconstruct the line with integer values and discard tokens with letters
+*/
 void Parser::to_final(){
     // Now we fix the negative integer values and also filter letters
     tk_single_char.seek(0);
@@ -644,7 +663,7 @@ void Parser::to_final(){
             break;
         
         case (ErrorType::Mistake_Parenthesis):
-            std::cout << "Extrasymbol after valid expression found at column (" << find_mistake_end_or_opening_parenthesis() << ")!" << std::endl;
+            std::cout << "Extra symbol after valid expression found at column (" << find_mistake_end_or_opening_parenthesis() << ")!" << std::endl;
         }
 
         
@@ -783,6 +802,9 @@ int Parser::find_mistake_end_or_opening_parenthesis(){
     return 0;
 }
 
+/**
+ * @brief Return the valid infixed expression codified with '@' to indicate int values after it
+*/
 std::string Parser::get_expression_codified(){
     tk_final.seek(0);
     std::string expression_infixed_codified = "";
@@ -800,6 +822,9 @@ std::string Parser::get_expression_codified(){
     return expression_infixed_codified;
 }
 
+/**
+ * @brief Resets the class
+*/
 void Parser::clear(){
     tk_raw_line.reset();
     tk_no_spaces.reset();
