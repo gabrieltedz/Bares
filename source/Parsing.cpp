@@ -45,7 +45,7 @@ void Parser::to_raw_line(){
 */
 void Parser::to_no_spaces(){
     // Remove the "()" tokens and pass them to tk_no_spaces
-    for (size_t i{0}; i < tk_raw_line.size(); i++){
+    for (int i = 0; i < tk_raw_line.size(); i++){
         
         // Use for testing
         //std::cout << "("<< tk.get_token() << ")";
@@ -63,7 +63,7 @@ void Parser::to_no_spaces(){
     // i.e: there arent tokens like this: "(-num 2)", as they will be split into:
     // "(-num", "2)" 
     // std::cout << "No spaces: " << std::endl;
-    for (size_t i{0}; i < tk_no_spaces.size(); i++){
+    for (int i = 0; i < tk_no_spaces.size(); i++){
         
         token = tk_no_spaces.get_token(); // Current token from tk_no_spaces
         
@@ -91,7 +91,7 @@ void Parser::to_no_spaces(){
 
     // Repass the desired tokens in this step to tk_no_spaces
     tk_no_spaces.reset();
-    for(size_t i{0}; i < temp.size(); i++){
+    for(int i = 0; i < temp.size(); i++){
         tk_no_spaces.set_tokens(temp.get_token());
         temp.next();
     }
@@ -107,13 +107,13 @@ void Parser::to_single_char(){
     // This next loop makes tokens like this: "(-num", "2)" . Into this: "(", "-", "num", "2", ")"
     std::string token;
     tk_no_spaces.seek(0);
-    for (size_t i{0}; i < tk_no_spaces.size(); i++){
+    for (int i = 0; i < tk_no_spaces.size(); i++){
         token = tk_no_spaces.get_token();
         
         if (token.size() == 1){
             tk_single_char.set_tokens(token);
         } else if (token.size() != 1) {
-            for (size_t j{0} ; j < token.size(); j++){
+            for (int j = 0; j < token.size(); j++){
                 
                 if (token[j] == '(') {
                     tk_single_char.set_tokens("(");
@@ -172,7 +172,7 @@ void Parser::to_final(){
                                     // (After ")" its ALWAYS expected for "-"" to be a subtraction and not an negative value)
 
     int zero{0};
-    for (size_t i{0}; i < tk_single_char.size();i++){
+    for (int i = 0; i < tk_single_char.size();i++){
         
         token = tk_single_char.get_token();
 
@@ -359,20 +359,38 @@ void Parser::to_final(){
     }
 
     tk_single_char.seek(0);
-    /*for (size_t i{0}; i < tk_single_char.size(); i++){
+    /*for (int i = 0; i < tk_single_char.size(); i++){
         std::cout << tk_single_char.get_token() << " ";
         tk_single_char.next();
     }*/
 
     //std::cout << std::endl << "Tokens finais: " << std::endl;
 
-    /*for (size_t i{0}; i < tk_final.size(); i++){
+    /*for (int i = 0; i < tk_final.size(); i++){
         token = tk_final.get_token();
         std::cout << token << " ";
         tk_final.next();
     }*/
-    tk_final.seek(0);
-    //std::cout << std::endl;
+
+    // Identify extra terms
+    bool number{false};
+    for (int i = 0; i < line.size(); i++){
+        if (line[i] == '0' || line[i] == '1' || line[i] == '2' || line[i] == '3' || line[i] == '4' || line[i] == '5' || line[i] == '6' || line[i] == '7' || line[i] == '8' || line[i] == '9' || line[i] == ' ' || line[i] == '+' || line[i] == '-' || line[i] == '*' || line[i] == '%' || line[i] == '/' || line[i] == '^' || line[i] == '(' || line[i] == ')'){
+            // its a valid number still a valid expression
+            if (line[i] == '0' || line[i] == '1' || line[i] == '2' || line[i] == '3' || line[i] == '4'  || line[i] == '5' || line[i] == '6' || line[i] == '7' || line[i] == '8' || line[i] == '9'){
+                number = true;
+            }
+        } else {
+            invalid = true;
+            if (number == true){
+                std::cout << "Extra symbol after valid expression found at column (" << i + 1 <<")!" << std::endl;
+            } else {
+                std::cout << "Missing <term> at column (" << i + 1 << ")!" << std::endl;
+            }
+            return;
+        }
+    }
+
 
     int parent_counter{0};
     bool is_expected_number_or_op_parent{true}; // (1)
@@ -386,7 +404,9 @@ void Parser::to_final(){
     
     tk_final.seek(0);
 
-    for (size_t i{0}; i < tk_final.size(); i++){
+    
+
+    for (int i = 0; i < tk_final.size(); i++){
         token = tk_final.get_token();
 
         
@@ -601,20 +621,19 @@ void Parser::to_final(){
     }
 
     if (tk_final.size_vector() == 0){
-        bool missing_term;
-        for (size_t i{0}; i < line.size(); i++){
+        
+        bool missing_term{false};
+        for (int i = 0; i < line.size(); i++){
             if (line[i] != ' '){
                 missing_term = true;
                 invalid = true;
                 error = ErrorType::First_Term_Missing;
-                
                 break;
             }
-            
+          
         }
-        // !!!!!!!
-        if (missing_term == false){     
-            std::cout << "Unexpected end of expression at column (" << line.size() + 1 << ")!" << std::endl;
+        if (missing_term == false){   
+            std::cout << "Unexpected end of expression at column (" << (line.size() + 1) << ")!" << std::endl;
             invalid = true;
         }
     }   
@@ -670,7 +689,7 @@ void Parser::to_final(){
 
 int Parser::find_first_parenthesis_without_number(){
     
-    for (size_t i{0}; i < line.size(); i++){
+    for (int i = 0; i < line.size(); i++){
         if (line[i] == '('){
             while (true){
                 i++;
@@ -699,7 +718,7 @@ int Parser::find_first_parenthesis_without_number(){
 
 int Parser::find_operator_without_number(){
     
-    for (size_t i{0}; i < line.size(); i++){
+    for (int i = 0; i < line.size(); i++){
         
         // Find the first operand without number
         if (line[i] == '+' || line [i] == '-' || line [i] == '*' || line [i] == '%' || line [i] == '/' || line [i] == '^' || line[i] == '('){
@@ -735,7 +754,7 @@ int Parser::find_operator_without_number(){
 }
 
 int Parser::first_term_missing(){
-    for (size_t i{0}; i < line.size(); i++){
+    for (int i = 0; i < line.size(); i++){
         
         // Find the first elements that isnt a int number or "("
         if (line[i] == '0' || line [i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9' || line[i] == '(' || line[i] == ' '){
@@ -749,7 +768,7 @@ int Parser::first_term_missing(){
 
 int Parser::find_missing_operator_after_number(){
     
-    for (size_t i{0}; i < line.size(); i++){
+    for (int i = 0; i < line.size(); i++){
         
         if (line[i] == '0' || line [i] == '1' || line [i] == '2' || line [i] == '3' || line [i] == '4' || line [i] == '5' || line [i] == '6' || line [i] == '7' || line [i] == '8' || line [i] == '9'){
             i++;
@@ -773,7 +792,7 @@ int Parser::find_missing_operator_after_number(){
 // Depois de ')' sempre deve ser um operando
 int Parser::find_missing_operator_after_end_parenthesis(){
     
-    for(size_t i{0}; i < line.size(); i++){
+    for(int i = 0; i < line.size(); i++){
         if (line[i] == ')'){
             i++;
             while(true){
@@ -789,7 +808,7 @@ int Parser::find_missing_operator_after_end_parenthesis(){
 
 int Parser::find_mistake_end_or_opening_parenthesis(){
     
-    for(size_t i{0}; i < line.size(); i++){
+    for(int i = 0; i < line.size(); i++){
         if(line[i] == '(' || line[i] == ')'){
             return i+1;
         }
@@ -804,7 +823,7 @@ std::string Parser::get_expression_codified(){
     tk_final.seek(0);
     std::string expression_infixed_codified = "";
     std::string token;
-    for(int i{0}; i < tk_final.size_vector(); i++){
+    for(int i = 0; i < tk_final.size_vector(); i++){
         token = tk_final.get_token();
         if(isConvertibleToInt(token)){
             expression_infixed_codified += '@';
