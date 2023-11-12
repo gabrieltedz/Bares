@@ -1,13 +1,12 @@
 #include "Calculator.h"
 
 int Calculator::isConvertibleToInt(std::string str){
-    try {
-            std::stoi(str);
-            return 0;
-        } catch (const std::out_of_range& e) {
-            // The string is convertible to an integer, but it's out of the valid range for int.
-            return 1;
-        }
+    int number;
+    number = std::stoi(str);
+    if (number >= -32768 && number <= 32767){
+        return 0;
+    } 
+    return 1;       
 }
 
 double power(double base, int exponent) {
@@ -29,18 +28,21 @@ void Calculator::receive_expression(std::string expr, std::string orig_line){
 
 int Calculator::calculate(){
     // Iterate through out the expression
-    bool out_of_range{false};
+    int n_out_of_range;
+     std::string check_result;
+    std::string int_numbr;
     for (int i = 0; i < expression.size(); i++){
         // If you find a '@', that means there's a int number ahead
         if (expression[i] == '@'){
             i++;
-            std::string int_numbr;
+            
             int_numbr = expression[i];
             i++;
             while(true){
                 if (is_number(expression[i])){
                     int_numbr += expression[i];
                     if (isConvertibleToInt(int_numbr) == 1){
+                        n_out_of_range = stoi(int_numbr);
                         out_of_range = true;
                         break;
                         //Integer constant out of range begginng at column...
@@ -55,6 +57,9 @@ int Calculator::calculate(){
                 }
                 i++;
             }
+            if(out_of_range == true){
+                break;
+            }
         } else if (expression[i] == '+'){
             op2 = m_stack.top();
             m_stack.pop();
@@ -62,6 +67,13 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 + op2);
+
+            check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
+            }
             
             m_stack.push(result);
         } else if (expression[i] == '-'){
@@ -71,6 +83,13 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 - op2);
+
+            check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
+            }
             
             m_stack.push(result);
         } else if (expression[i] == '*'){
@@ -79,11 +98,14 @@ int Calculator::calculate(){
             op1 = m_stack.top();
             m_stack.pop();
 
-            if (op1 == 0 || op2 == 0){
-                // Multiplication by zero!!
-            }
-
             result = (op1 * op2);
+
+            check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
+            }
             
             m_stack.push(result);
         } else if (expression[i] == '^'){
@@ -94,29 +116,41 @@ int Calculator::calculate(){
 
             if (op1 == 0 && op2 == 0){
                 // Undefined value!!
-                std::cout << "passou aqui!";
+                und_value = true;
+                std::cout << "Undefined value!" << std::endl;
             }
             double value = power(op1,op2);
-            if (value){
-                //if value out of range...
-            }
+        
             result = value;
+
+            check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
+            }
             
             m_stack.push(result);
         } else if (expression[i] == '/'){
             op2 = m_stack.top();
-            m_stack.pop();
-            op1 = m_stack.top();
-            m_stack.pop();
-
             if (op2 == 0){
-                // Division by zero!!
-                std::cout << "divisão por zero?";
+                // Erro aqui
+                div_by_zero = true;
+                break;
+            } else {
+                m_stack.pop();
+                op1 = m_stack.top();
+                m_stack.pop();
+                result = (op1 / op2);
+                check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
             }
-
-            result = (op1 / op2);
+                m_stack.push(result);
+            }
             
-            m_stack.push(result);
         } else if (expression[i] == '%'){
             op2 = m_stack.top();
             m_stack.pop();
@@ -124,22 +158,33 @@ int Calculator::calculate(){
             m_stack.pop();
 
             result = (op1 % op2);
+            check_result = std::to_string(result);
+            if(isConvertibleToInt(check_result) == 1){
+                num_overflow = true;
+                break;
+                //numeric overflow error!!
+            }
             
             m_stack.push(result);
-        }
-        std::string check_result = std::to_string(result);
-        if(isConvertibleToInt(check_result) == 1){
-            out_of_range = true;
-            //numeric overflow error!!
         }
     }
     
     if (out_of_range == true){
         //use find para achar o termo fora
+        std::cout << "Integer constant out of range beginning at column (" << original_line.find(int_numbr) + 1 << ")!" << std::endl;
+        return 0;
+    } else if (div_by_zero == true) {
+        std::cout << "Division by zero!" << std::endl;
+        return 0;
+    } else if (num_overflow == true){
+        std::cout << "Numeric overflow error!" << std::endl;
+        return 0;
     }
-    result = m_stack.top();
-    //std::cout << "Here is the result of the expression: " << result << std::endl;
-    return result;
+    
+    else {
+        result = m_stack.top();
+        return result;
+    }
 }
 
 void Calculator::clear(){
@@ -151,4 +196,8 @@ void Calculator::clear(){
     while (!m_stack.empty()) {
         m_stack.pop();
     }
+    out_of_range = false;
+    div_by_zero = false;
+    und_value = false;
+    num_overflow = false;
 }
