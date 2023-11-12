@@ -13,7 +13,12 @@ private:
     int result{0};              //!< Result of operation
     std::stack<int> m_stack;    //!< Stack of int numbers
     
+
 public:
+    bool out_of_range{false};
+    bool div_by_zero{false};
+    bool und_value{false};
+    bool num_overflow{false};
     /**
      * @brief Receive @param expression (posfixed) and the @param original_line with the original line
     */
