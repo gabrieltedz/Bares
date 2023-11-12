@@ -1,5 +1,8 @@
 #include "Calculator.h"
 
+/**
+ * @brief verify is @param str is convertible to int
+*/
 int Calculator::isConvertibleToInt(std::string str){
     int number;
     number = std::stoi(str);
@@ -9,7 +12,10 @@ int Calculator::isConvertibleToInt(std::string str){
     return 1;       
 }
 
-double power(double base, int exponent) {
+/**
+ * @brief Exponentiation
+*/
+double Calculator::power(double base, int exponent) {
     double result = 1.0;
     for (int i = 0; i < exponent; i++) {
         result *= base;
@@ -17,21 +23,29 @@ double power(double base, int exponent) {
     return result;
 }
 
+    /**
+     * @brief verify if @param digit is a number
+    */
 bool Calculator::is_number(char digit){
     return std::isdigit(static_cast<unsigned char>(digit)) != 0;
 }
 
+/**
+ * @brief Receive @param expression (posfixed) and the @param original_line with the original line
+*/
 void Calculator::receive_expression(std::string expr, std::string orig_line){
     expression = expr;
     original_line = orig_line;
 }
 
+/**
+ * @brief Calculate the result of the entire expression
+*/
 int Calculator::calculate(){
     // Iterate through out the expression
-    int n_out_of_range;
      std::string check_result;
     std::string int_numbr;
-    for (int i = 0; i < expression.size(); i++){
+    for (size_t i = 0; i < expression.size(); i++){
         // If you find a '@', that means there's a int number ahead
         if (expression[i] == '@'){
             i++;
@@ -42,7 +56,6 @@ int Calculator::calculate(){
                 if (is_number(expression[i])){
                     int_numbr += expression[i];
                     if (isConvertibleToInt(int_numbr) == 1){
-                        n_out_of_range = stoi(int_numbr);
                         out_of_range = true;
                         break;
                         //Integer constant out of range begginng at column...
@@ -187,6 +200,9 @@ int Calculator::calculate(){
     }
 }
 
+/**
+ * @brief Reset the class
+*/
 void Calculator::clear(){
     expression.clear();
     original_line.clear();

@@ -15,10 +15,15 @@ private:
     
 
 public:
+
+    /**
+     * @brief auxiliary bool values to indicate erros
+    */
     bool out_of_range{false};
     bool div_by_zero{false};
     bool und_value{false};
     bool num_overflow{false};
+
     /**
      * @brief Receive @param expression (posfixed) and the @param original_line with the original line
     */
@@ -44,6 +49,10 @@ public:
     */
     void clear();
 
+    /**
+     * @brief Exponentiation
+    */
+    double Calculator::power(double base, int exponent); 
 };
 
 #endif 
