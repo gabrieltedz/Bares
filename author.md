@@ -1,3 +1,7 @@
+#Introdução
+
+O projeto BARES visa o desenvolvimento de um avaliador de expressões simples baseadas em pilhas, semelhante à uma calculadora.
+
 ﻿# Identificação Pessoal
 
 - Nome: Thiago de Medeiros Raquel
