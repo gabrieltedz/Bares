@@ -216,7 +216,7 @@ bool Pos_fixed::isConvertibleToInt(std::string str){
 
 /**
  * @brief Returns the result string variable
- * @return result expression posfixed
+ * @return result expression posfixed.
 */
 std::string Pos_fixed::return_result(){
     return result;
