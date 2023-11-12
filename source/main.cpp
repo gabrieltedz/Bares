@@ -38,7 +38,18 @@ int main() {
             Calculator calc;
             calc.receive_expression(m_pos_fix.return_result() , line);
             int result = calc.calculate();
-            std::cout << result << std::endl;
+            if (calc.out_of_range == true){
+                
+            } else if (calc.div_by_zero == true){
+            
+            } else if (calc.num_overflow == true){
+
+            } else if (calc.und_value == true){
+
+            }   else {
+                std::cout << result << std::endl; 
+            }
+            
 
 
             calc.clear();
