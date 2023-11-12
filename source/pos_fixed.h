@@ -54,7 +54,7 @@ public:
     std::string return_result();
 
     /**
-     * @brief Resets the class
+     * @brief Resets the class!!
     */
     void clear();
 
